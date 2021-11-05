@@ -23,8 +23,9 @@ func NewGenerator(space string) (*Generator, error) {
 // same space and same name will result in same uuid. So the
 // guarantee of the uniqueness of the generated UUIDs is application's
 // responsibility
-func (g Generator) GenerateV5(name string) string {
-	return uuid.NewSHA1(g.space, []byte(name)).String()
+func (g Generator) GenerateV5(name string) *uuid.UUID {
+	uuid := uuid.NewSHA1(g.space, []byte(name))
+	return &uuid
 }
 
 // This method returns a fully random UUID (UUID v4).
