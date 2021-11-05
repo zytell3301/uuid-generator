@@ -1,4 +1,4 @@
-module uuid-generator
+module github.com/zytell3301/uuid-generator
 
 go 1.16
 
