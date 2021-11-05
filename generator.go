@@ -26,3 +26,16 @@ func NewGenerator(space string) (*Generator, error) {
 func (g Generator) GenerateV5(name string) string {
 	return uuid.NewSHA1(g.space, []byte(name)).String()
 }
+
+// This method returns a fully random UUID (UUID v4).
+// Returned UUID will be nil if an error occurred while
+// generating the uuid
+func (Generator) GenerateV4() (*uuid.UUID, error) {
+	uuid, err := uuid.NewRandom()
+	switch err != nil {
+	case true:
+		return nil, err
+	}
+
+	return &uuid, nil
+}
