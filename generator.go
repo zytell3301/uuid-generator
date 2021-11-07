@@ -9,8 +9,12 @@ type Generator struct {
 }
 
 func NewGenerator(space string) (*Generator, error) {
-	uuidSpace, err := uuid.Parse(space)
+	switch space == "" {
+	case true:
+		return &Generator{}, nil
+	}
 
+	uuidSpace, err := uuid.Parse(space)
 	switch err != nil {
 	case true:
 		return nil, err
