@@ -83,6 +83,25 @@ func (g Generator) ChangeWorkerCount(count int) {
 	}
 }
 
+// PAY ATTENTION THAT ANY CHANGES TO BUFFER SIZE WILL CAUSE THE LOSS OF
+// GENERATED IDS AND RESTARTING ALL WORKERS.
+// THIS WILL CAUSE ALL YOU CODES THAT ARE REQUESTING FOR ID TO BE BLOCKED
+// FOR A FEW MILLIS
+
+// Increase generators buffer size.
+func (g Generator) IncreaseBufferSizeBy(size int) {
+	g.stopV4Workers()
+	g.bufferSize = g.bufferSize + size
+	g.v4Buffer = make(chan uuid.UUID, g.bufferSize)
+	g.startV4Workers()
+}
+
+func (g Generator) stopV4Workers() {
+	for i := 0; i < g.workerCount; i++ {
+		g.v4StopSignal <- struct{}{}
+	}
+}
+
 // This method treats as a hashing function. But be careful that
 // same space and same name will result in same uuid. So the
 // guarantee of the uniqueness of the generated UUIDs is application's
