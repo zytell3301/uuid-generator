@@ -56,6 +56,13 @@ func (g Generator) v4Generator() {
 	}
 }
 
+// Increases workers count by given number
+func (g Generator) IncreaseWorkersBy(count int) {
+	for i := 0; i < count; i++ {
+		go g.v4Generator()
+	}
+}
+
 // This method treats as a hashing function. But be careful that
 // same space and same name will result in same uuid. So the
 // guarantee of the uniqueness of the generated UUIDs is application's
