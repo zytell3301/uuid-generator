@@ -63,6 +63,14 @@ func (g Generator) IncreaseWorkersBy(count int) {
 	}
 }
 
+// Decreases workers count by given number
+func (g Generator) DecreaseWorkersBy(count int) {
+	for i := 0; i < count; i++ {
+		g.v4StopSignal <- struct{}{}
+	}
+	g.workerCount = g.workerCount - count
+}
+
 // This method treats as a hashing function. But be careful that
 // same space and same name will result in same uuid. So the
 // guarantee of the uniqueness of the generated UUIDs is application's
