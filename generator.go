@@ -104,6 +104,14 @@ func (g Generator) DecreaseBufferSizeBy(size int) {
 	g.startV4Workers()
 }
 
+// Sets buffer size to the given number
+func (g Generator) SetBufferSize(size int) {
+	g.stopV4Workers()
+	g.bufferSize = size
+	g.v4Buffer = make(chan uuid.UUID, g.bufferSize)
+	g.startV4Workers()
+}
+
 func (g Generator) stopV4Workers() {
 	for i := 0; i < g.workerCount; i++ {
 		g.v4StopSignal <- struct{}{}
