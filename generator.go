@@ -88,7 +88,7 @@ func (g Generator) ChangeWorkerCount(count int) {
 // THIS WILL CAUSE ALL YOU CODES THAT ARE REQUESTING FOR ID TO BE BLOCKED
 // FOR A FEW MILLIS
 
-// Increase generators buffer size.
+// Increase generator's buffer size by given number.
 func (g Generator) IncreaseBufferSizeBy(size int) {
 	g.stopV4Workers()
 	g.bufferSize = g.bufferSize + size
