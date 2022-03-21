@@ -36,7 +36,7 @@ func NewGenerator(space string, bufferSize int, workerCount int) (*Generator, er
 }
 
 func (g Generator) startV4Workers() {
-	for i := 0; i < g.bufferSize; i++ {
+	for i := 0; i < g.workerCount; i++ {
 		go g.v4Generator()
 	}
 }
