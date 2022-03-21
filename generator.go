@@ -72,6 +72,17 @@ func (g Generator) DecreaseWorkersBy(count int) {
 	g.workerCount = g.workerCount - count
 }
 
+// Sets worker count to given number
+func (g Generator) ChangeWorkerCount(count int) {
+	switch g.workerCount-count < 0 {
+	case true:
+		g.IncreaseWorkersBy(count - g.workerCount)
+		break
+	default:
+		g.DecreaseWorkersBy(g.workerCount - count)
+	}
+}
+
 // This method treats as a hashing function. But be careful that
 // same space and same name will result in same uuid. So the
 // guarantee of the uniqueness of the generated UUIDs is application's
