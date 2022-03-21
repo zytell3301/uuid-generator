@@ -90,18 +90,12 @@ func (g Generator) ChangeWorkerCount(count int) {
 
 // Increase generator's buffer size by given number.
 func (g Generator) IncreaseBufferSizeBy(size int) {
-	g.stopV4Workers()
-	g.bufferSize = g.bufferSize + size
-	g.v4Buffer = make(chan uuid.UUID, g.bufferSize)
-	g.startV4Workers()
+	g.SetBufferSize(g.bufferSize + size)
 }
 
 // Decrease generator's buffer size by given number
 func (g Generator) DecreaseBufferSizeBy(size int) {
-	g.stopV4Workers()
-	g.bufferSize = g.bufferSize - size
-	g.v4Buffer = make(chan uuid.UUID, g.bufferSize)
-	g.startV4Workers()
+	g.SetBufferSize(g.bufferSize - size)
 }
 
 // Sets buffer size to the given number
