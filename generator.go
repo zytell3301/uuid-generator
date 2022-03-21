@@ -61,6 +61,7 @@ func (g Generator) IncreaseWorkersBy(count int) {
 	for i := 0; i < count; i++ {
 		go g.v4Generator()
 	}
+	g.workerCount = g.workerCount + count
 }
 
 // Decreases workers count by given number
