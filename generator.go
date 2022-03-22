@@ -1,16 +1,20 @@
 package uuid_generator
 
 import (
+	"crypto/rand"
 	"github.com/google/uuid"
+	"time"
 )
 
 type Generator struct {
 	space uuid.UUID
 
-	v4Buffer     chan uuid.UUID
-	v4StopSignal chan struct{}
-	bufferSize   int
-	workerCount  int
+	v4Buffer            chan uuid.UUID
+	v4StopSignal        chan struct{}
+	bufferSize          int
+	workerCount         int
+	useCustomReader     bool
+	readerCheckInterval int
 }
 
 func NewGenerator(space string, bufferSize int, workerCount int) (*Generator, error) {
@@ -38,6 +42,26 @@ func NewGenerator(space string, bufferSize int, workerCount int) (*Generator, er
 func (g Generator) startV4Workers() {
 	for i := 0; i < g.workerCount; i++ {
 		go g.v4Generator()
+	}
+}
+
+// Checker won't get started if a non positive interval supplied.
+// Deactivate checker if it is causing any issues like performance issues or etc.
+func (g Generator) checkReaderAvailability() {
+	switch g.readerCheckInterval <= 0 {
+	case true:
+		return
+	}
+
+	for {
+		_, err := rand.Reader.Read(make([]byte, 1))
+		switch err != nil {
+		case true:
+			g.useCustomReader = true
+		default:
+			g.useCustomReader = false
+		}
+		time.Sleep(time.Duration(g.readerCheckInterval) * time.Second)
 	}
 }
 
