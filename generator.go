@@ -82,6 +82,9 @@ func (g Generator) StopReaderChecker() error {
 	return nil
 }
 
+// If you haven't started reader checker on initialization or want to
+// start the checker after stopping it, you can use this method instead of
+// creating another instance of Generator
 func (g Generator) StartReaderChecker(interval int) error {
 	switch g.readerCheckInterval > 0 {
 	case true:
