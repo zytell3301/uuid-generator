@@ -86,6 +86,10 @@ func (g Generator) StopReaderChecker() error {
 // start the checker after stopping it, you can use this method instead of
 // creating another instance of Generator
 func (g Generator) StartReaderChecker(interval int) error {
+	switch interval <= 0 {
+	case true:
+		return InvalidCheckerIntervalSuppliedError
+	}
 	switch g.readerCheckInterval > 0 {
 	case true:
 		return CheckerAlreadyStartedError
