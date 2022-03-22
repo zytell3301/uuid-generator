@@ -9,12 +9,13 @@ import (
 type Generator struct {
 	space uuid.UUID
 
-	v4Buffer            chan uuid.UUID
-	v4StopSignal        chan struct{}
-	bufferSize          int
-	workerCount         int
-	useCustomReader     bool
-	readerCheckInterval int
+	v4Buffer                chan uuid.UUID
+	v4StopSignal            chan struct{}
+	bufferSize              int
+	workerCount             int
+	useCustomReader         bool
+	readerCheckInterval     int
+	readerCheckerStopSignal chan struct{}
 }
 
 func NewGenerator(space string, bufferSize int, workerCount int) (*Generator, error) {
@@ -54,12 +55,18 @@ func (g Generator) checkReaderAvailability() {
 	}
 
 	for {
-		_, err := rand.Reader.Read(make([]byte, 1))
-		switch err != nil {
-		case true:
-			g.useCustomReader = true
+		select {
+		case <-g.readerCheckerStopSignal:
+			g.readerCheckInterval = 0
+			return
 		default:
-			g.useCustomReader = false
+			_, err := rand.Reader.Read(make([]byte, 1))
+			switch err != nil {
+			case true:
+				g.useCustomReader = true
+			default:
+				g.useCustomReader = false
+			}
 		}
 		time.Sleep(time.Duration(g.readerCheckInterval) * time.Second)
 	}
