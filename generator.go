@@ -18,14 +18,16 @@ type Generator struct {
 	readerCheckerStopSignal chan struct{}
 }
 
-func NewGenerator(space string, bufferSize int, workerCount int) (*Generator, error) {
+func NewGenerator(space string, bufferSize int, workerCount int, readerCheckInterval int) (*Generator, error) {
 	generator := Generator{
-		bufferSize:   bufferSize,
-		workerCount:  workerCount,
-		v4Buffer:     make(chan uuid.UUID, bufferSize),
-		v4StopSignal: make(chan struct{}),
+		bufferSize:          bufferSize,
+		workerCount:         workerCount,
+		v4Buffer:            make(chan uuid.UUID, bufferSize),
+		v4StopSignal:        make(chan struct{}),
+		readerCheckInterval: readerCheckInterval,
 	}
 	generator.startV4Workers()
+	generator.StartReaderChecker(generator.readerCheckInterval)
 	switch space == "" {
 	case true:
 		return &generator, nil
