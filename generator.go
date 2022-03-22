@@ -72,6 +72,16 @@ func (g Generator) checkReaderAvailability() {
 	}
 }
 
+// If you notice any issues with checker, you can easily stop it by using this method
+func (g Generator) StopReaderChecker() error {
+	switch g.readerCheckInterval <= 0 {
+	case true:
+		return CheckerAlreadyStoppedError
+	}
+	g.readerCheckerStopSignal <- struct{}{}
+	return nil
+}
+
 func (g Generator) v4Generator() {
 	for {
 		select {
