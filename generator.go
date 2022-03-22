@@ -95,6 +95,17 @@ func (g Generator) StartReaderChecker(interval int) error {
 	return nil
 }
 
+// Use this method to change checking interval instead of creating another
+// Generator instance
+func (g Generator) SetCheckerInterval(interval int) error {
+	switch g.readerCheckInterval <= 0 {
+	case true:
+		return CheckerAlreadyStoppedError
+	}
+	g.readerCheckInterval = interval
+	return nil
+}
+
 func (g Generator) v4Generator() {
 	for {
 		select {
