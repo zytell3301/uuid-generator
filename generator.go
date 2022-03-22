@@ -3,6 +3,8 @@ package uuid_generator
 import (
 	"crypto/rand"
 	"github.com/google/uuid"
+	"io"
+	rand2 "math/rand"
 	"time"
 )
 
@@ -118,13 +120,30 @@ func (g Generator) v4Generator() {
 		case <-g.v4StopSignal:
 			return
 		default:
-			uuid, err := uuid.NewRandom()
+			var id uuid.UUID
+			var err error
+
+			switch g.useCustomReader {
+			case true:
+				id, err = g.generateV4WithCustomReader()
+				break
+			default:
+				id, err = uuid.NewRandom()
+			}
 			switch err == nil {
 			case true:
-				g.v4Buffer <- uuid
+				g.v4Buffer <- id
 			}
 		}
 	}
+}
+
+func (g Generator) generateV4WithCustomReader() (uuid.UUID, error) {
+	return uuid.NewRandomFromReader(getCustomReader())
+}
+
+func getCustomReader() io.Reader {
+	return rand2.New(rand2.NewSource(time.Now().UnixNano()))
 }
 
 // Increases workers count by given number
