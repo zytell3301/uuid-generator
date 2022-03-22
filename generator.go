@@ -82,6 +82,16 @@ func (g Generator) StopReaderChecker() error {
 	return nil
 }
 
+func (g Generator) StartReaderChecker(interval int) error {
+	switch g.readerCheckInterval > 0 {
+	case true:
+		return CheckerAlreadyStartedError
+	}
+	g.readerCheckInterval = interval
+	go g.checkReaderAvailability()
+	return nil
+}
+
 func (g Generator) v4Generator() {
 	for {
 		select {
