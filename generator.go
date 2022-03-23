@@ -20,6 +20,7 @@ type Generator struct {
 	readerCheckerStopSignal chan struct{}
 }
 
+// Returns a new Generator instance
 func NewGenerator(space string, bufferSize int, workerCount int, readerCheckInterval int) (*Generator, error) {
 	generator := Generator{
 		bufferSize:          bufferSize,
@@ -114,6 +115,7 @@ func (g Generator) SetCheckerInterval(interval int) error {
 	return nil
 }
 
+// Worker for generating v4 IDs
 func (g Generator) v4Generator() {
 	for {
 		select {
@@ -138,10 +140,12 @@ func (g Generator) v4Generator() {
 	}
 }
 
+// Generates ID from custom reader if crypto/rand is failing
 func (g Generator) generateV4WithCustomReader() (uuid.UUID, error) {
 	return uuid.NewRandomFromReader(getCustomReader())
 }
 
+// Returns custom reader for generating IDs if crypto/rand is failing
 func getCustomReader() io.Reader {
 	return rand2.New(rand2.NewSource(time.Now().UnixNano()))
 }
@@ -175,7 +179,7 @@ func (g Generator) ChangeWorkerCount(count int) {
 
 // PAY ATTENTION THAT ANY CHANGES TO BUFFER SIZE WILL CAUSE THE LOSS OF
 // GENERATED IDS AND RESTARTING ALL WORKERS.
-// THIS WILL CAUSE ALL YOU CODES THAT ARE REQUESTING FOR ID TO BE BLOCKED
+// THIS WILL CAUSE ALL YOUR CODES THAT ARE REQUESTING FOR ID TO BE BLOCKED
 // FOR A FEW MILLIS
 
 // Increase generator's buffer size by given number.
@@ -196,6 +200,7 @@ func (g Generator) SetBufferSize(size int) {
 	g.startV4Workers()
 }
 
+// Stops all v4 generator workers (Mainly used for changing buffer configs)
 func (g Generator) stopV4Workers() {
 	for i := 0; i < g.workerCount; i++ {
 		g.v4StopSignal <- struct{}{}
