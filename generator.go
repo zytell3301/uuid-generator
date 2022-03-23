@@ -212,14 +212,14 @@ func (g Generator) stopV4Workers() {
 // guarantee of the uniqueness of the generated UUIDs is application's
 // responsibility
 func (g Generator) GenerateV5(name string) *uuid.UUID {
-	uuid := uuid.NewSHA1(g.space, []byte(name))
-	return &uuid
+	id := uuid.NewSHA1(g.space, []byte(name))
+	return &id
 }
 
 // This method returns a fully random UUID (UUID v4).
 // Returned UUID will be nil if an error occurred while
 // generating the uuid
 func (g Generator) GenerateV4() *uuid.UUID {
-	uuid := <-g.v4Buffer
-	return &uuid
+	id := <-g.v4Buffer
+	return &id
 }
